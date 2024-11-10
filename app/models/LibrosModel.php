@@ -1,13 +1,33 @@
 <?php
 require_once "app/models/Model.php";
 class LibrosModel extends Model{
-    public function all(){
+
+    //Obtiene todos los registros y los filtra y ordena de ser necesario
+    public function all($sort, $filter){
         try{
             $connection = $this->crearConexion();
             $connection->beginTransaction();
-                $query = $connection->prepare("SELECT libros.*, autores.nombre AS autor_nombre, autores.biografia AS autor_biografia, autores.imagen AS autor_imagen FROM libros JOIN autores ON libros.autor = autores.id");
-                $query->execute();
-                $libros = $query->fetchAll(PDO::FETCH_OBJ);
+            $queryString = "
+            SELECT libros.*, autores.nombre AS autor_nombre, autores.biografia AS autor_biografia, autores.imagen AS autor_imagen
+            FROM libros
+            JOIN autores ON libros.autor = autores.id";
+
+
+            if($filter){
+                $queryString .= " WHERE {$filter->getField()} LIKE :filter";
+            }
+
+            if($sort){
+                $queryString .= " ORDER BY " . $sort->getSortedField()." ".$sort->getOrder();
+            }
+
+            $query = $connection->prepare($queryString);
+
+            if ($filter) {
+                $query->bindValue(':filter', '%' . $filter->getFilter() . '%', PDO::PARAM_STR);
+            }
+            $query->execute();
+            $libros = $query->fetchAll(PDO::FETCH_OBJ);
             $connection->commit();
             return $libros;
         }catch(Exception $e){
@@ -15,13 +35,53 @@ class LibrosModel extends Model{
             error_log($e->getMessage());
         }
     }
+        //Obtiene un número limitado de registros definido en el objeto page y los ordena y filtra de ser necesario
+    public function allPaginated($page){
+        try{
+            $connection = $this->crearConexion();
+            $connection->beginTransaction();
+
+            $queryString = "
+            SELECT libros.*, autores.nombre AS autor_nombre, autores.biografia AS autor_biografia, autores.imagen AS autor_imagen
+            FROM libros
+            JOIN autores ON libros.autor = autores.id";
+
+
+            if($page->getFilter()){
+                $queryString .= " WHERE {$page->getFilter()->getField()} LIKE :filter";
+            }
+
+            if($page->getSort()){
+                $queryString .= " ORDER BY " . $page->getSort()->getSortedField()." ".$page->getSort()->getOrder();
+            }
+
+            $queryString .= " LIMIT :page_size OFFSET :offset";
+
+            $query = $connection->prepare($queryString);
+
+            if ($page->getFilter()) {
+                $query->bindValue(':filter', '%' . $page->getFilter()->getFilter() . '%', PDO::PARAM_STR);
+            }
+            $query->bindValue(':page_size', $page->getSize(), PDO::PARAM_INT);
+            $query->bindValue(':offset', (($page->getNumber() - 1) * $page->getSize()), PDO::PARAM_INT);
+
+            $query->execute();
+            $connection->commit();
+            $page->setContents($query->fetchAll(PDO::FETCH_OBJ));
+            
+            return $page;
+        }catch(Exception $e){
+            $connection->rollBack();
+            error_log(message: $e->getMessage());
+        }
+    }
     public function find($isbn){
         try{
             $connection = $this->crearConexion();
             $connection->beginTransaction();
-                $query = $connection->prepare("SELECT libros.*, autores.id AS autor_id, autores.nombre AS autor_nombre, autores.biografia AS autor_biografia, autores.imagen AS autor_imagen FROM libros JOIN autores ON libros.autor = autores.id WHERE libros.isbn=?");
-                $query->execute([$isbn]);
-                $libro = $query->fetch(PDO::FETCH_OBJ);
+            $query = $connection->prepare("SELECT libros.*, autores.id AS autor_id, autores.nombre AS autor_nombre, autores.biografia AS autor_biografia, autores.imagen AS autor_imagen FROM libros JOIN autores ON libros.autor = autores.id WHERE libros.isbn=?");
+            $query->execute([$isbn]);
+            $libro = $query->fetch(PDO::FETCH_OBJ);
             $connection->commit();
             return $libro;
         }catch(Exception $e){
