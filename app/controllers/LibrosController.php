@@ -1,8 +1,7 @@
 <?php
 require_once "app/models/LibrosModel.php";
-require_once "app/models/AutoresModel.php";
-require_once "app/views/LibrosView.php";
-require_once "helpers/AuthHelper.php";
+require_once "app/views/AutoresView.php";
+require_once "helpers/PaginationHelper.php";
 
 class LibrosController {
     private $model;
@@ -11,101 +10,85 @@ class LibrosController {
 
     function __construct(){
         $this->model = new LibrosModel();
-        $this->autoresModel = new AutoresModel();
-        $this->view = new LibrosView();
+        $this->view = new AutoresView();
     }
 
-    public function index(){
-        $this->view->index($this->model->all());
-    }
-
-    public function show($id){
-        $libro = $this->model->find($id);
-        if($libro){
-            $this->view->show($libro);
+    public function getAll($req) {
+        if(isset($_GET['paginate']) && $_GET['paginate'] == true){
+            $libros = $this->model->allPaginated(PaginationHelper::getPage($req));
         }else{
-            echo "Libro con ISBN ".$id." no encontrado.";
+            $libros = $this->model->all(PaginationHelper::getSort($req), PaginationHelper::getFilter($req));            
+        }
+        $this->view->response($libros, 200);
+    }
+    public function get($req){
+        if(empty($req->params->ID)){
+            return $this->getAll($req);
+        }else{
+            $tarea = $this->model->find($req->params->ID);
+            if($tarea){
+                return $this->view->response($tarea, 200);
+            }else{
+                return $this->view->response("No existe el libro a obtener.", 404);
+            }
         }
     }
-
-    public function create(){
-        if(AuthHelper::isAdmin()){
-            $this->view->create($this->autoresModel->all());
+    public function add($req){
+        if(empty($req)){
+            return $this->getAll($req);
         }else{
-            header("Location:".BASE_URL."iniciar-sesion");
-            die();
-        }
-    }
-
-    public function store(){
-        if(AuthHelper::isAdmin()){
             $campos = ["isbn", "titulo", "fecha_de_publicacion", "editorial", "encuadernado", "sinopsis", "autor", "nro_de_paginas"];
             $libro = new stdClass();
             $isValidLibro = true;
             foreach($campos as $campo){
-                $libro->$campo = $_POST[$campo] ?? false;
+                $libro->$campo = $req->body->$campo ?? false;
                 $isValidLibro = $isValidLibro && $libro->$campo;
             }
             if($isValidLibro){
                 $this->model->create($libro);
-                header("Location:".BASE_URL."libros/$libro->isbn");
-                die();
+                return $this->view->response("Libro creado exitosamente".$descripcion,200);
             }else{
-                header("Location:".BASE_URL."libros/crear");
-                die();    
+                $this->view->response("No se pude crear el libro porque hay campos vacios.", 404);
             }
-
-        }else{
-            header("Location:".BASE_URL."iniciar-sesion");
-            die();
         }
     }
-
-    public function edit($id){
-        $libro = $this->model->find($id);
-        if(AuthHelper::isAdmin()){
+    public function update($req){
+        if(empty($req)){
+            return $this->getAll($req);
+        }else{
+            $id=$req->params->ID;
+            $libro = $this->model->find($id);
             if($libro){
-                $this->view->edit($libro, $this->autoresModel->all(), $id);
+                $campos = ["isbn", "titulo", "fecha_de_publicacion", "editorial", "encuadernado", "sinopsis", "autor", "nro_de_paginas", "old_isbn"];
+                $libro = new stdClass();
+                $isValidLibro = true;
+                foreach($campos as $campo){
+                    $libro->$campo = $req->body->$campo ?? false;
+                    $isValidLibro = $isValidLibro && $libro->$campo;
+                }
+
+                if($isValidLibro){
+                    $this->model->update($libro);
+                    $this->view->response("El libro con id ".$id." se actualizo de forma correcta.", 200);
+                }else{
+                    $this->view->response("El libro no se puede actualizar porque hay campos vacíos.", 404);
+                }
             }else{
-                echo "Libro con ISBN ".$id." no encontrado.";
+                $this->view->response("El libro no existe.", 404);
             }
-        }else{
-            header("Location:".BASE_URL."iniciar-sesion");
-            die();
         }
     }
-    public function update(){
-        if(AuthHelper::isAdmin()){
-            $campos = ["isbn", "titulo", "fecha_de_publicacion", "editorial", "encuadernado", "sinopsis", "autor", "nro_de_paginas", "old_isbn"];
-            $libro = new stdClass();
-            $isValidLibro = true;
-            foreach($campos as $campo){
-                $libro->$campo = $_POST[$campo] ?? false;
-                $isValidLibro = $isValidLibro && $libro->$campo;
-            }
-            if($isValidLibro){
-                $this->model->update($libro);
-                header("Location:".BASE_URL."libros/$libro->isbn");
-                die();
+    public function delete($req){
+        if(empty($req->params->ID)){
+            return $this->getAll($req);
+        }else{
+            $libro = $this->model->find($req->params->ID);
+            if($libro){
+                $this->model->delete($req->params->ID);
+                $this->view->response("El libro ".$libro->titulo." se elimino correctamente.", 200);
             }else{
-                header("Location:".BASE_URL."libros/editar/$libro->old_isbn");
-                die();    
+                $this->view->response("El libro con la id ".$req->params->ID." no se encuentra en registrado.", 404);
             }
-
-        }else{
-            header("Location:".BASE_URL."iniciar-sesion");
-            die();
-        }
-    }
-
-    public function destroy($id){
-        if(AuthHelper::isAdmin()){
-            $this->model->delete($id);
-            header("Location:".BASE_URL."libros");
-            die();
-        }else{
-            header("Location:".BASE_URL."iniciar-sesion");
-            die();
         }
     }
 }
