@@ -1,6 +1,9 @@
 <?php
     require_once 'libs/router.php';
+    require_once 'libs/Middleware/JWTAuth.php';
     require_once 'app/controllers/LibrosController.php';
+    require_once 'app/controllers/UsuariosController.php';
+
 
     $router = new Router();
 /*
@@ -15,5 +18,7 @@
     $router->addRoute('libros', 'POST', 'LibrosController', 'add');
     $router->addRoute('libros/:ID', 'DELETE', 'LibrosController', 'delete');
     $router->addRoute('libros/:ID', 'PUT', 'LibrosController', 'update');
+
+    $router->addRoute('login', 'POST', 'UsuariosController', 'login');
 
     $router->route($_GET["resource"], $_SERVER['REQUEST_METHOD']);
