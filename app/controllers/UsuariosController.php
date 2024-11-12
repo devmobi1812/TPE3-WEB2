@@ -1,13 +1,14 @@
 <?php
 require_once "helpers/AuthHelper.php";
-require_once "app/views/AutoresView.php";
+require_once "helpers/PaginationHelper.php";
+require_once "app/views/APIView.php";
 require_once "app/models/UsuariosModel.php";
 class UsuariosController {
     private $view;
     private $model;
     public function __construct(){
         $this->model = new UsuariosModel();
-        $this->view = new AutoresView();
+        $this->view = new APIView();
     }
     public function login($req){
         $username = $req->body->username;

@@ -1,6 +1,5 @@
 <?php
     require_once 'libs/router.php';
-    require_once 'libs/Middleware/JWTAuth.php';
     require_once 'app/controllers/LibrosController.php';
     require_once 'app/controllers/UsuariosController.php';
 
