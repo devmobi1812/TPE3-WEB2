@@ -9,12 +9,12 @@
               header("$key: $value");
             }
             echo json_encode($data);
-            die();
         }        
 
         private function _requestStatus($code){
             $status = array(
               200 => "OK",
+              201=> "Solicitud ejecutada con exito",
               401 => "Sin Autorizacion", 
               404 => "Pagina no encontrada",
               500 => "Error de servidor"

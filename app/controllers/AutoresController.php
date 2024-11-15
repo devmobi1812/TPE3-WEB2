@@ -55,7 +55,33 @@
             }
     
             $this->model->create($autor);
-            $this->view->response("Autor creado exitosamente",200);
+            $this->view->response("Autor creado exitosamente",201);
+        }
+
+        public function update($req){
+            if(empty($req->params->ID)){
+                $this->getAll($req);
+            }
+            if(!AuthHelper::verifyJWTToken($req)){
+                return $this->view->response("No tienes permiso para acceder a este recurso", 401);
+            }
+    
+            $campos = ["nombre", "biografia", "imagen"];
+            $autor = new stdClass();
+            $esAutorValido = true;
+            foreach($campos as $campo){
+                $autor->$campo = $req->body->$campo ?? false;
+                $esAutorValido = $esAutorValido && $autor->$campo;
+            }
+
+            $autor->id=$req->params->ID;
+    
+            if(!$esAutorValido){
+                return $this->view->response("No se pude actualizr el autor porque hay campos vacios.", 404);
+            }
+    
+            $this->model->update($autor);
+            $this->view->response("Autor actualizado exitosamente",201);
         }
 
         public function delete($req){

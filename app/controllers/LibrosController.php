@@ -56,7 +56,7 @@ class LibrosController {
         }
 
         $this->model->create($libro);
-        $this->view->response("Libro creado exitosamente",200);
+        $this->view->response("Libro creado exitosamente",201);
     }
 
     public function update($req){
@@ -87,7 +87,7 @@ class LibrosController {
         }
 
         $this->model->update($libro);
-        $this->view->response("El libro con id ".$req->params->ID." se actualizo de forma correcta.", 200);
+        $this->view->response("El libro con id ".$req->params->ID." se actualizo de forma correcta.", 201);
     }
     public function delete($req){
         if(empty($req->params->ID)){

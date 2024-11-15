@@ -22,8 +22,8 @@ require_once "config/config.php";
         //TODO: todo esto es tentativo. Referencia: https://dzone.com/articles/create-your-jwts-from-scratch
         public static function base64UrlEncode($data) {
             $base64 = base64_encode($data);
-            $base64Url = str_replace(['+', '/', '='], ['-', '_', ''], $base64);
-            return $base64Url;
+            //$base64Url = str_replace(['+', '/', '='], ['-', '_', ''], $base64);
+            return $base64;
         }
         
         public static function decodeJWT($token) {
@@ -78,7 +78,7 @@ require_once "config/config.php";
                 $base64UrlPayload = self::base64UrlEncode(json_encode($sections[1]));
                 $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, SECRET, true);
     
-                return $sections[3] === $signature;
+                return $sections[2] === $signature;
             } else {
                 return false;
             }
