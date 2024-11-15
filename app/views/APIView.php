@@ -15,9 +15,9 @@
         private function _requestStatus($code){
             $status = array(
               200 => "OK",
-              401 => "Unauthorized", 
-              404 => "Not found",
-              500 => "Internal Server Error"
+              401 => "Sin Autorizacion", 
+              404 => "Pagina no encontrada",
+              500 => "Error de servidor"
             );
             return (isset($status[$code]))? $status[$code] : $status[500];
           }

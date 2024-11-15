@@ -14,11 +14,26 @@
                 error_log($e->getMessage());
             }
         }
-        public function all(){
+        public function getAll($sort, $filter){
             try{
                 $conexion = $this->crearConexion();
                 $conexion->beginTransaction();
-                    $query = $conexion -> prepare('SELECT id, nombre, biografia, imagen FROM autores ORDER BY nombre ASC');
+                    $queryString="SELECT id, nombre, biografia, imagen FROM autores";
+                    
+                    if($filter){
+                        $queryString .= " WHERE {$filter->getField()} LIKE :filter";
+                    }
+        
+                    if($sort){
+                        $queryString .= " ORDER BY " . $sort->getSortedField()." ".$sort->getOrder();
+                    }
+
+                    $query = $conexion -> prepare($queryString);
+
+                    if ($filter) {
+                        $query->bindValue(':filter', '%' . $filter->getFilter() . '%', PDO::PARAM_STR);
+                    }
+
                     $query -> execute();
                     $autores = $query -> fetchAll(PDO::FETCH_OBJ);
 
@@ -30,6 +45,42 @@
                 error_log($e->getMessage());
             }
         }
+                //Obtiene un número limitado de registros definido en el objeto page y los ordena y filtra de ser necesario
+    public function allPaginated($page){
+        try{
+            $conexion = $this->crearConexion();
+            $conexion->beginTransaction();
+
+            $queryString = "SELECT id, nombre, biografia, imagen FROM autores";
+
+            if($page->getFilter()){
+                $queryString .= " WHERE {$page->getFilter()->getField()} LIKE :filter";
+            }
+
+            if($page->getSort()){
+                $queryString .= " ORDER BY " . $page->getSort()->getSortedField()." ".$page->getSort()->getOrder();
+            }
+
+            $queryString .= " LIMIT :page_size OFFSET :offset";
+
+            $query = $conexion->prepare($queryString);
+
+            if ($page->getFilter()) {
+                $query->bindValue(':filter', '%' . $page->getFilter()->getFilter() . '%', PDO::PARAM_STR);
+            }
+            $query->bindValue(':page_size', $page->getSize(), PDO::PARAM_INT);
+            $query->bindValue(':offset', (($page->getNumber() - 1) * $page->getSize()), PDO::PARAM_INT);
+
+            $query->execute();
+            $conexion->commit();
+            $page->setContents($query->fetchAll(PDO::FETCH_OBJ));
+            
+            return $page;
+        }catch(Exception $e){
+            $conexion->rollBack();
+            error_log(message: $e->getMessage());
+        }
+    }
 
         public function find($id){
             try{
