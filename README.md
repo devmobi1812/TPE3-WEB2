@@ -36,3 +36,7 @@
 #### *Login*
 - *username*: Nombre de usuario del usuario (obligatorio).  
 - *password*: Contraseña del usuario (obligatorio).
+
+#### *Datos de Login*
+- *username*: webadmin.  
+- *password*: admin.
