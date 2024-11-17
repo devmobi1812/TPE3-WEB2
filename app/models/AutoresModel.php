@@ -20,17 +20,19 @@
                 $conexion->beginTransaction();
                     $queryString="SELECT id, nombre, biografia, imagen FROM autores";
                     
-                    if($filter){
+                    $columnasPermitidas = ["id","nombre", "biografia", "imagen"];
+                    $ordenPermitidos = ["ASC", "DESC"];
+                    if($filter && in_array($filter->getField(), $columnasPermitidas)){
                         $queryString .= " WHERE {$filter->getField()} LIKE :filter";
                     }
         
-                    if($sort){
+                    if($sort && in_array($sort->getSortedField(), $columnasPermitidas) && in_array($sort->getOrder(), $ordenPermitidos)){
                         $queryString .= " ORDER BY " . $sort->getSortedField()." ".$sort->getOrder();
                     }
 
                     $query = $conexion -> prepare($queryString);
 
-                    if ($filter) {
+                    if ($filter && in_array($filter->getField(), $columnasPermitidas)) {
                         $query->bindValue(':filter', '%' . $filter->getFilter() . '%', PDO::PARAM_STR);
                     }
 
@@ -53,11 +55,13 @@
 
             $queryString = "SELECT id, nombre, biografia, imagen FROM autores";
 
-            if($page->getFilter()){
+            $columnasPermitidas = ["id","nombre", "biografia", "imagen"];
+            $ordenPermitidos = ["ASC", "DESC"];
+            if($page->getFilter() && in_array($page->getFilter()->getField(), $columnasPermitidas)){
                 $queryString .= " WHERE {$page->getFilter()->getField()} LIKE :filter";
             }
 
-            if($page->getSort()){
+            if($page->getSort() && in_array($page->getSort()->getSortedField(), $columnasPermitidas) && in_array($page->getSort()->getOrder(), $ordenPermitidos)){
                 $queryString .= " ORDER BY " . $page->getSort()->getSortedField()." ".$page->getSort()->getOrder();
             }
 
@@ -65,7 +69,7 @@
 
             $query = $conexion->prepare($queryString);
 
-            if ($page->getFilter()) {
+            if ($page->getFilter() && in_array($page->getFilter()->getField(), $columnasPermitidas)) {
                 $query->bindValue(':filter', '%' . $page->getFilter()->getFilter() . '%', PDO::PARAM_STR);
             }
             $query->bindValue(':page_size', $page->getSize(), PDO::PARAM_INT);
@@ -97,6 +101,8 @@
             }
         }
 
+        // METODO NO IMPLEMENTADO NI MODIFICADO PARA ESTE TPE (EL 3)
+        /*
         public function getLibrosAutor($id){
             try{
                 $conexion = $this->crearConexion();
@@ -114,6 +120,7 @@
                 error_log($e->getMessage());
             }
         }
+        */
 
         public function delete($id){
             try{

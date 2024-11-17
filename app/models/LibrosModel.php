@@ -12,8 +12,8 @@ class LibrosModel extends Model{
             FROM libros
             JOIN autores ON libros.autor = autores.id";
 
-            $allowedColumns = [ "nombre", "biografia", "imagen", "isbn", "titulo", "fecha_de_publicacion", "editorial", "encuadernado", "sinopsis", "autor", "nro_de_paginas", "autor_id", "autor_biografia", "autor_imagen", "auto.id", "autor.biografia", "autor.imagen"];
-            $allowedOrders = ["ASC", "DES"];
+            $allowedColumns = [ "isbn", "titulo", "fecha_de_publicacion", "editorial", "encuadernado", "sinopsis", "autor", "nro_de_paginas", "autor_id", "autor_biografia", "autor_imagen", "auto.id", "autor.biografia", "autor.imagen"];
+            $allowedOrders = ["ASC", "DESC"];
             
             if($filter && in_array($filter->getField(), $allowedColumns)){
                 $queryString .= " WHERE {$filter->getField()} LIKE :filter";
@@ -48,8 +48,8 @@ class LibrosModel extends Model{
             FROM libros
             JOIN autores ON libros.autor = autores.id";
 
-            $allowedColumns = [ "nombre", "biografia", "imagen", "isbn", "titulo", "fecha_de_publicacion", "editorial", "encuadernado", "sinopsis", "autor", "nro_de_paginas", "autor_id", "autor_biografia", "autor_imagen", "auto.id", "autor.biografia", "autor.imagen"];
-            $allowedOrders = ["ASC", "DES"];
+            $allowedColumns = [ "isbn", "titulo", "fecha_de_publicacion", "editorial", "encuadernado", "sinopsis", "autor", "nro_de_paginas", "autor_id", "autor_biografia", "autor_imagen", "auto.id", "autor.biografia", "autor.imagen"];
+            $allowedOrders = ["ASC", "DESC"];
 
             if($page->getFilter() && in_array($page->getFilter()->getField(), $allowedColumns)){
                 $queryString .= " WHERE {$page->getFilter()->getField()} LIKE :filter";
