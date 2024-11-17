@@ -12,7 +12,7 @@ class TokenController {
     }
     public function JWT($req){
         if(empty($req->body->username)||empty($req->body->password)){
-            $this->view->response("No fue posible validar el inicio de sesión. Usuario o contraseña no cargada.", 401);
+            return $this->view->response("No fue posible validar el inicio de sesión. Usuario o contraseña no cargada.", 401);
         }
 
         $user = new stdClass();
@@ -21,10 +21,10 @@ class TokenController {
         $token = JWTHelper::login($user);
 
         if(!$token){
-            $this->view->response("No fue posible validar el inicio de sesión. Credenciales incorrectas.", 401);
+            return $this->view->response("No fue posible validar el inicio de sesión. Credenciales incorrectas.", 401);
         }
 
-        $this->view->response("Token generado exitosamente", 200, [
+        return $this->view->response("Token generado exitosamente", 200, [
             "Authorization" => "Bearer {$token}"
         ]);
     }
