@@ -100,7 +100,7 @@
             }
     
             $this->model->delete($req->params->ID);
-            return $this->view->response("El auto se elimino correctamente.", 200);
+            return $this->view->response("El autor se elimino correctamente.", 200);
         }
 
     }
