@@ -12,19 +12,21 @@ class LibrosModel extends Model{
             FROM libros
             JOIN autores ON libros.autor = autores.id";
 
-
-            if($filter){
+            $allowedColumns = [ "nombre", "biografia", "imagen", "isbn", "titulo", "fecha_de_publicacion", "editorial", "encuadernado", "sinopsis", "autor", "nro_de_paginas", "autor_id", "autor_biografia", "autor_imagen", "auto.id", "autor.biografia", "autor.imagen"];
+            $allowedOrders = ["ASC", "DES"];
+            
+            if($filter && in_array($filter->getField(), $allowedColumns)){
                 $queryString .= " WHERE {$filter->getField()} LIKE :filter";
             }
 
-            if($sort){
+            if($sort && in_array($sort->getSortedField(), $allowedColumns) && in_array($sort->getOrder(), $allowedOrders)){
                 $queryString .= " ORDER BY " . $sort->getSortedField()." ".$sort->getOrder();
             }
 
             $query = $connection->prepare($queryString);
 
-            if ($filter) {
-                $query->bindValue(':filter', '%' . $filter->getFilter() . '%', PDO::PARAM_STR);
+            if ($filter && in_array($filter->getField(), $allowedColumns)) {
+                $query->bindValue(':filter', '%' . $filter->getFilter() . '%', type: PDO::PARAM_STR);
             }
             $query->execute();
             $libros = $query->fetchAll(PDO::FETCH_OBJ);
@@ -46,12 +48,14 @@ class LibrosModel extends Model{
             FROM libros
             JOIN autores ON libros.autor = autores.id";
 
+            $allowedColumns = [ "nombre", "biografia", "imagen", "isbn", "titulo", "fecha_de_publicacion", "editorial", "encuadernado", "sinopsis", "autor", "nro_de_paginas", "autor_id", "autor_biografia", "autor_imagen", "auto.id", "autor.biografia", "autor.imagen"];
+            $allowedOrders = ["ASC", "DES"];
 
-            if($page->getFilter()){
+            if($page->getFilter() && in_array($page->getFilter()->getField(), $allowedColumns)){
                 $queryString .= " WHERE {$page->getFilter()->getField()} LIKE :filter";
             }
 
-            if($page->getSort()){
+            if($page->getSort() && in_array($page->getSort()->getSortedField(), $allowedColumns) && in_array($page->getSort()->getOrder(), $allowedOrders)){
                 $queryString .= " ORDER BY " . $page->getSort()->getSortedField()." ".$page->getSort()->getOrder();
             }
 
@@ -59,7 +63,7 @@ class LibrosModel extends Model{
 
             $query = $connection->prepare($queryString);
 
-            if ($page->getFilter()) {
+            if($page->getFilter() && in_array($page->getFilter()->getField(), $allowedColumns)){
                 $query->bindValue(':filter', '%' . $page->getFilter()->getFilter() . '%', PDO::PARAM_STR);
             }
             $query->bindValue(':page_size', $page->getSize(), PDO::PARAM_INT);

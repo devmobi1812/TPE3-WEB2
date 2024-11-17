@@ -12,8 +12,8 @@ class PaginationHelper{
     public static function getPage($req){
         $page = new Page();
 
-        $page->setNumber($req->query->page_number ?? 1);
-        $page->setSize($req->query->page_size ?? DEFAULT_PAGE_SIZE);
+        $page->setNumber((!empty($req->query->page_number) && filter_var($req->query->page_number, FILTER_VALIDATE_INT) && $req->query->page_number >= 1) ? $req->query->page_number :1);
+        $page->setSize((!empty($req->query->page_size) && filter_var($req->query->page_size, FILTER_VALIDATE_INT) && $req->query->page_size >= 1) ? $req->query->page_size : DEFAULT_PAGE_SIZE);
         $page->setSort(self::getSort($req));
         $page->setFilter( self::getFilter($req));
 
@@ -25,7 +25,7 @@ class PaginationHelper{
      * @return Filter|null
      */
     public static function getFilter($req){
-        if(!empty($req->query->filter_field) && !empty($req->query->filter)){
+        if(!empty($req->query->filter_field)){
             $filter = new Filter();
             $filter->setField($req->query->filter_field);
             $filter->setFilter($req->query->filter);
@@ -42,7 +42,7 @@ class PaginationHelper{
         if(!empty($req->query->sort_by)){
             $sort = new Sort();
             $sort->setSortedField($req->query->sort_by);
-            $sort->setOrder($req->query->order ?? "ASC");
+            $sort->setOrder(($req->query->order ) ? $req->query->order : "ASC" );
             return $sort;
         }
         return null;
