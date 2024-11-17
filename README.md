@@ -17,26 +17,35 @@
 
 ### Campos explicados:
 
+#### **Valores permitidos en los Query Params**
+- **En ordenar libro**: isbn, titulo, fecha_de_publicacion, editorial, encuadernado, sinopsis, autor, nro_de_paginas, autor_id, autor_biografia, autor_imagen
+    - **Tipos de orden utilizados**: ASC, DESC
+- **En ordenar autor**: id,nombre, biografia, imagen
+    - **Tipos de orden utilizados**: ASC, DESC
+- **En filtrar libro**: isbn, titulo, fecha_de_publicacion, editorial, encuadernado, sinopsis, autor, nro_de_paginas, autor.id, autor.biografia, autor.imagen
+- **En filtrar autor**: id,nombre, biografia, imagen
+    
+
 #### *Libros*
-- *isbn*: Código ISBN del libro (obligatorio).  
-- *titulo*: Título del libro (obligatorio).  
-- *fecha_de_publicacion*: Fecha en que se publicó el libro (obligatorio).  
-- *editorial*: Editorial que publicó el libro (obligatorio).  
-- *encuadernado*: Tipo de encuadernación (ejemplo: "Tapa dura", "Tapa blanda", obligatorio).  
-- *sinopsis*: Resumen o descripción del contenido del libro (obligatorio).  
-- *autor*: ID del autor asociado al libro (obligatorio).  
-- *nro_de_paginas*: Número de páginas del libro (obligatorio).  
-- *old_isbn*: Código ISBN anterior, utilizado en actualizaciones (obligatorio).  
+- **isbn**: Código ISBN del libro (obligatorio).  
+- **titulo**: Título del libro (obligatorio).  
+- **fecha_de_publicacion**: Fecha en que se publicó el libro (obligatorio).  
+- **editorial**: Editorial que publicó el libro (obligatorio).  
+- **encuadernado**: Tipo de encuadernación (ejemplo: "Tapa dura", "Tapa blanda", obligatorio).  
+- **sinopsis**: Resumen o descripción del contenido del libro (obligatorio).  
+- **autor**: ID del autor asociado al libro (obligatorio).  
+- **nro_de_paginas**: Número de páginas del libro (obligatorio).  
+- **old_isbn**: Código ISBN anterior, utilizado en actualizaciones (obligatorio).  
 
-#### *Autores*
-- *nombre*: Nombre completo del autor (obligatorio).  
-- *biografia*: Descripción o biografía del autor (obligatorio).  
-- *imagen*: URL o datos de la imagen del autor (obligatorio).  
+#### **Autores**
+- **nombre**: Nombre completo del autor (obligatorio).  
+- **biografia**: Descripción o biografía del autor (obligatorio).  
+- **imagen**: URL o datos de la imagen del autor (obligatorio).  
 
-#### *Login*
-- *username*: Nombre de usuario del usuario (obligatorio).  
-- *password*: Contraseña del usuario (obligatorio).
+#### **Login**
+- **username**: Nombre de usuario del usuario (obligatorio).  
+- **password**: Contraseña del usuario (obligatorio).
 
-#### *Datos de Login*
-- *username*: webadmin.  
-- *password*: admin.
+#### **Datos de Login**
+- **username**: webadmin.  
+- **password**: admin.
