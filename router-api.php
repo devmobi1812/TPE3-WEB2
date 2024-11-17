@@ -2,7 +2,7 @@
     require_once 'libs/router.php';
     require_once 'app/controllers/LibrosController.php';
     require_once 'app/controllers/AutoresController.php';
-    require_once 'app/controllers/UsuariosController.php';
+    require_once 'app/controllers/TokenController.php';
 
 
     $router = new Router();
@@ -25,6 +25,6 @@
     $router->addRoute('autores/:ID', 'DELETE', 'AutoresController', 'delete');
     $router->addRoute('autores/:ID', 'PUT', 'AutoresController', 'update');
     
-    $router->addRoute('login', 'POST', 'UsuariosController', 'login');
+    $router->addRoute('login', 'POST', 'TokenController', 'JWT');
 
     $router->route($_GET["resource"], $_SERVER['REQUEST_METHOD']);

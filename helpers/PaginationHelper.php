@@ -2,7 +2,7 @@
 require_once 'libs/Pagination/Page.php';
 require_once 'libs/Pagination/Filter.php';
 require_once 'libs/Pagination/Sort.php';
-
+require_once 'config/config.php';
 class PaginationHelper{
     /**
      * En base a un request construye una página con todos los parámetros pedidos por url
@@ -13,7 +13,7 @@ class PaginationHelper{
         $page = new Page();
 
         $page->setNumber($req->query->page_number ?? 1);
-        $page->setSize($req->query->page_size ?? 50);
+        $page->setSize($req->query->page_size ?? DEFAULT_PAGE_SIZE);
         $page->setSort(self::getSort($req));
         $page->setFilter( self::getFilter($req));
 
