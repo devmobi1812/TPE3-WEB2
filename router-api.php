@@ -6,13 +6,7 @@
 
 
     $router = new Router();
-/*
-    $router->addRoute('libros', 'GET', 'TareasController', 'getAll');
-    $router->addRoute('libro/:ID', 'GET', 'TareasController', 'get');
-    $router->addRoute('libro', 'POST', 'TareasController', 'add');
-    $router->addRoute('libro/:ID', 'DELETE', 'TareasController', 'borrar');
-    $router->addRoute('libro/:ID', 'PUT', 'TareasController', 'update');
-*/
+
     $router->addRoute('libros', 'GET', 'LibrosController', 'getAll');
     $router->addRoute('libros/:ID', 'GET', 'LibrosController', 'get');
     $router->addRoute('libros', 'POST', 'LibrosController', 'add');

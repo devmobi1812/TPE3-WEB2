@@ -70,20 +70,18 @@ class LibrosController {
         $libro = $this->model->find($req->params->ID);
         if(!$libro){
             return $this->view->response("El libro no existe.", 404);
-        }        
-        if(!JWTHelper::verifyJWTToken($req)){
-            return $this->view->response("No tienes permiso para acceder a este recurso", 401);
         }
 
-        $campos = ["isbn", "titulo", "fecha_de_publicacion", "editorial", "encuadernado", "sinopsis", "autor", "nro_de_paginas", "old_isbn"];
+        $campos = ["isbn", "titulo", "fecha_de_publicacion", "editorial", "encuadernado", "sinopsis", "autor", "nro_de_paginas"];
         $libro = new stdClass();
         $isValidLibro = true;
         foreach($campos as $campo){
             $libro->$campo = $req->body->$campo ?? false;
-            $isValidLibro = $isValidLibro && !$libro->$campo;
+            $isValidLibro = $isValidLibro && $libro->$campo;
         }
+        $libro->old_isbn = $req->params->ID;
         if(!$isValidLibro){
-            return $this->view->response("El libro no se puede actualizar porque hay campos vacíos.", 404);
+            return $this->view->response("El libro no se puede actualizar porque hay campos vacíos.", 400);
         }
 
         $this->model->update($libro);
@@ -99,7 +97,7 @@ class LibrosController {
 
         $libro = $this->model->find($req->params->ID);
         if(!$libro){
-            return $this->view->response("El libro con la id ".$req->params->ID." no se encuentra en registrado.", 404);
+            return $this->view->response("El libro con la id ".$req->params->ID." no se encuentra registrado.", 404);
         }
 
         $this->model->delete($req->params->ID);

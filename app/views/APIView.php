@@ -15,6 +15,7 @@
             $status = array(
               200 => "OK",
               201=> "Solicitud ejecutada con exito",
+              400=> "No se puede procesar la solicitud",
               401 => "Sin Autorizacion", 
               404 => "Pagina no encontrada",
               500 => "Error de servidor"

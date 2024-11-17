@@ -49,7 +49,7 @@
             }
     
             if(!$esAutorValido){
-                return $this->view->response("No se pude crear el autor porque hay campos vacios.", 404);
+                return $this->view->response("No se pude crear el autor porque hay campos vacios.", 400);
             }
     
             $this->model->create($autor);
@@ -63,7 +63,11 @@
             if(!JWTHelper::verifyJWTToken($req)){
                 return $this->view->response("No tienes permiso para acceder a este recurso", 401);
             }
-    
+            $autorExiste = $this->model->find($req->params->ID);
+            if(!$autorExiste){
+                return $this->view->response("El autor no existe.", 404);
+            }
+
             $campos = ["nombre", "biografia", "imagen"];
             $autor = new stdClass();
             $esAutorValido = true;
@@ -75,7 +79,7 @@
             $autor->id=$req->params->ID;
     
             if(!$esAutorValido){
-                return $this->view->response("No se pude actualizr el autor porque hay campos vacios.", 404);
+                return $this->view->response("No se pude actualizr el autor porque hay campos vacios.", 400);
             }
     
             $this->model->update($autor);
